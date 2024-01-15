@@ -40,3 +40,4 @@ This has been built with the version 18.18 of Node JS
 ### Exam information - to be completed
 - Student (Lastname and Firstname) : GREGOIRE Lucas
 - GitHub repository URL : https://github.com/lucas-gregoire-vinci/examendevops
+- j'ai eu d'importants problèmes avec Azure qui m'empechait de faire l'examen comme je l'aurais voulu j'ai donc fait presque tout avec github
