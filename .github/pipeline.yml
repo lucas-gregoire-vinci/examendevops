@@ -1,0 +1,61 @@
+trigger:
+- main
+
+pr:
+- '*'
+
+jobs:
+- job: build_and_test
+  displayName: 'Build and Test'
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - checkout: self
+  - task: UseNode@1
+    inputs:
+      versionSpec: '16.14'
+      checkLatest: true
+  - script: |
+      npm ci
+      npm run build
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '3.1.x'
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+  - script: |
+      dotnet tool install -g coverlet.console
+  - script: |
+      dotnet test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/TestResults/*.trx'
+      searchFolder: '$(System.DefaultWorkingDirectory)'
+      testRunTitle: 'Test Run'
+
+- job: deploy
+  displayName: 'Deploy to Production'
+  dependsOn: build_and_test
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - checkout: self
+  - task: UseNode@1
+    inputs:
+      versionSpec: '16.14'
+      checkLatest: true
+  - script: |
+      npm ci
+      npm run build
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '3.1.x'
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+  - script: |
+      dotnet publish -c Release -o ./publish
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.SourcesDirectory)/publish'
+      artifactName: 'drop'
+      publishLocation: 'Container'
