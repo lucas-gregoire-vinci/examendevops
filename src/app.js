@@ -31,17 +31,22 @@ try {
             ) !important`;
 
     let gamerTagValue;
+    let feedbackMessageText;
 
     gamerTagInput.addEventListener('change', (event) => {
         gamerTagValue = event.target.value;
     });
 
     checkButton.addEventListener('click', () => {
+        feedbackMessageText = isEmpty(gamerTagValue)
+            ? "Gamer tag cannot be empty"
+            : "Gamer tag is valid";
+
         const validationResult = isValid(gamerTagValue);
         // TODO : Define the correct error message regarding the validation rules
-        feedbackMessage.textContent = validationResult
-            ? 'Gamer tag is not valid'
-            : 'Gamer tag is valid';
+         feedbackMessage.textContent = validationResult
+             ? 'Gamer tag is not valid'
+             : 'Gamer tag is valid';
         // ----------------------------------------------------------------------
         body.setAttribute(
             'style',
